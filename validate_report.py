@@ -16,14 +16,20 @@ def validate():
             sys.exit(1)
 
         for item in items:
-            if 'deepLink' in item:
-                deep_link = item['deepLink']
-                # regex to ensure deepLink matches expected GitHub URL format
-                if not re.match(r'^https://github\.com/.*', deep_link):
-                    print(f"Invalid deepLink format: {deep_link}")
-                    sys.exit(1)
-            else:
-                pass
+            if 'deepLink' not in item:
+                print("Missing deepLink in item")
+                sys.exit(1)
+
+            deep_link = item['deepLink']
+
+            if not isinstance(deep_link, str):
+                print(f"Invalid deepLink type: {type(deep_link)}. Expected string.")
+                sys.exit(1)
+
+            # strict regex to ensure deepLink matches expected GitHub URL format for issues/pulls
+            if not re.match(r'^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/(issues|pull)/[0-9]+$', deep_link):
+                print(f"Invalid deepLink format: {deep_link}")
+                sys.exit(1)
 
     except Exception as e:
         print(f"Error validating report: {e}")
