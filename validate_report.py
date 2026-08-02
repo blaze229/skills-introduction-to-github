@@ -15,6 +15,9 @@ def validate():
             print("Invalid JSON format. Expected list or dict.")
             sys.exit(1)
 
+        # strict regex to ensure deepLink matches expected GitHub URL format for issues/pulls
+        deep_link_pattern = re.compile(r'^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/(issues|pull)/[0-9]+$')
+
         for item in items:
             if 'deepLink' not in item:
                 print("Missing deepLink in item")
@@ -26,8 +29,7 @@ def validate():
                 print(f"Invalid deepLink type: {type(deep_link)}. Expected string.")
                 sys.exit(1)
 
-            # strict regex to ensure deepLink matches expected GitHub URL format for issues/pulls
-            if not re.match(r'^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/(issues|pull)/[0-9]+$', deep_link):
+            if not deep_link_pattern.match(deep_link):
                 print(f"Invalid deepLink format: {deep_link}")
                 sys.exit(1)
 
